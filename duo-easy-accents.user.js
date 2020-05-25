@@ -13,9 +13,9 @@ Licensed under the MIT License (MIT)
 Full text of the license is available at https://raw2.github.com/HodofHod/Userscripts/master/LICENSE
 */
 
-// Technically, these are accents, diacritics, and ligatures, 
+// Technically, these are accents, diacritics, and ligatures,
 // but accents is the commonest of those terms so that's the script's title.
-// Some languages have characters that can be accented in many different ways 
+// Some languages have characters that can be accented in many different ways
 // (like the French 'e' or the Portuguese 'a'). While those letters are reachable by tapping ALT multiple times, 
 // it may become unweildy and annoying. I am open to other suggestions.
 
@@ -51,6 +51,7 @@ function main(){
         eo: {'C':'ĉ', 'G':'ĝ', 'H':'ĥ', 'J':'ĵ', 'S':'ŝ', 'U':'ŭ'},           // Esperanto
         cs: { 'A': "á", C: "č", D: "ď", E: "éě", I: "í", N: "ň", O: "ó",      // Czech
              R: "ř", S: "š", T: "ť", U: "úů", Y: "ý", Z: "ž" },
+        additional: {'W':'ŵ', 'Y':'ŷ'}
         },
         taps = 0,
         last_press = [];
@@ -90,22 +91,38 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
         //To override any other Alt+<x> hotkeys.
         return false;
     });
-    
+
+    function getCharList(base) {
+        var allChars = $(".I1fg4 ._2JSLn ._1tSEs._2Hv7w") //$(".vkeyboard_key[key]")
+            .text().toLowerCase().split('');
+        var chars = "";
+        for(var keyLang in maps) {
+            if (maps.hasOwnProperty(keyLang)) {
+                var list = maps[keyLang][base];
+                if (list) chars += list;
+            }
+        }
+
+        var clist = allChars.filter(function(c) { return chars.indexOf(c) > -1; });
+        return clist ? clist.join('') : false;
+    }
+
     function get_char(lang, base, index){
         var char_lst;
         if (lang && maps[lang]) char_lst = maps[lang][base];
+        if (!char_lst) char_lst = getCharList(base);
         return char_lst ? char_lst[index % char_lst.length] : false;
     }
-    
+
     function insert_char(textarea, new_char, del){
         var text = textarea.value,
             start = textarea.selectionStart,
             end = textarea.selectionEnd;
         //Insert the character. If we're rotating through alternate letters, remove the last character.
-        textarea.value = text.slice(0, del ? end-1 : start) + new_char + text.slice(end);         
+        textarea.value = text.slice(0, del ? end-1 : start) + new_char + text.slice(end);
         //Move the caret. If deleting the previous, the caret should remain. (Hence x+!del)
         //If replacing selected text (and not deleting previous), caret should unselect and be start+1
-        textarea.setSelectionRange(start+!del, (end-start&&!del ? start : end) +!del); 
+        textarea.setSelectionRange(start+!del, (end-start&&!del ? start : end) +!del);
     }
     $(document).on('keyup', '[lang][lang!=en]', function (e){
         if (e.which === 18){ //ALT keyup
