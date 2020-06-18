@@ -94,8 +94,10 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
     });
 
     function getCharList(base) {
-        var allChars = $(".I1fg4 ._2JSLn ._1tSEs._2Hv7w") //$(".vkeyboard_key[key]")
-            .text().toLowerCase().split('');
+        // var allChars = $(".I1fg4 ._2JSLn ._1tSEs._2Hv7w") //$(".vkeyboard_key[key]")
+        //     .text().toLowerCase().split('');
+        var allChars = []; // it needs to be searched another way; skip this logic for a while
+        // TODO try document.querySelectorAll("textarea[data-test^=challenge-] ~ div button")
         var chars = "";
         for(var keyLang in maps) {
             if (maps.hasOwnProperty(keyLang)) {
@@ -105,14 +107,13 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
         }
 
         var clist = allChars.filter(function(c) { return chars.indexOf(c) > -1; });
-        return clist ? clist.join('') : false;
+        return clist.join('');
     }
 
     function get_char(lang, base, index){
-        var char_lst;
-        if (lang && maps[lang]) char_lst = maps[lang][base];
-        if (!char_lst) char_lst = getCharList(base);
-        return char_lst ? char_lst[index % char_lst.length] : false;
+        var char_lst = lang && maps[lang] && maps[lang][base]
+            || getCharList(base);
+        return char_lst && char_lst[index % char_lst.length];
     }
 
     function insert_char(textarea, new_char, del){
