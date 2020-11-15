@@ -3,7 +3,7 @@
 // @description  Makes typing characters with accents and diacritics easy! Just use the Alt key!
 // @match        *://www.duolingo.com/*
 // @author       @HodofHod, Ennorion
-// @version      0.2.2-mod
+// @version      0.2.3-mod
 // ==/UserScript==
 
 /*
